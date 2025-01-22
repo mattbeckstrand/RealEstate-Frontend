@@ -1,3 +1,7 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { fetchFromAPI } from '@/lib/api';
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -14,7 +18,23 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-export default function Page() {
+export default function DashboardPage() {
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    async function testConnection() {
+      try {
+        const data = await fetchFromAPI('/api/test');
+        setMessage(data.message);
+      } catch (error) {
+        console.error('Error connecting to API:', error);
+        setMessage('Failed to connect to API');
+      }
+    }
+
+    testConnection();
+  }, []);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -22,29 +42,13 @@ export default function Page() {
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">
-                  Building Your Application
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+          <h1 className="text-2xl font-bold">Settings</h1>
+          <p>API Status: {message}</p>
+          {/* Settings content */}
         </div>
       </SidebarInset>
     </SidebarProvider>
   )
-}
+} 
