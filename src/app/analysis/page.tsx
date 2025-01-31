@@ -15,19 +15,22 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface FileResult {
   filename: string;
   file_type: string;
   analysis: string;
+  raw_analyses?: string[];
 }
 
-interface FileData {
-  results: FileResult[];
+interface AnalysisData {
+  individual_analyses: FileResult[];
+  combined_analysis: string;
 }
 
 export default function AnalysisPage() {
-  const [fileData, setFileData] = useState<FileData | null>(null);
+  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -39,12 +42,7 @@ export default function AnalysisPage() {
         return;
       }
       const parsedData = JSON.parse(storedData);
-      // Ensure the data has the expected structure
-      if (!Array.isArray(parsedData)) {
-        setFileData({ results: [parsedData] });
-      } else {
-        setFileData({ results: parsedData });
-      }
+      setAnalysisData(parsedData);
     } catch (err) {
       setError("Failed to load analysis data. Please try uploading files again.");
     }
@@ -89,23 +87,57 @@ export default function AnalysisPage() {
             <Button onClick={handleBack}>Back to Upload</Button>
           </div>
 
-          {fileData && fileData.results && fileData.results.length > 0 ? (
-            <Card className="p-6">
-              <Accordion type="single" collapsible className="w-full">
-                {fileData.results.map((result, index) => (
-                  <AccordionItem key={index} value={`item-${index}`}>
-                    <AccordionTrigger className="text-xl">
-                      {result.filename} ({result.file_type})
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="whitespace-pre-wrap font-mono text-sm bg-muted p-4 rounded-md">
-                        {result.analysis}
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </Card>
+          {analysisData ? (
+            <div className="space-y-6">
+              {/* Combined Investment Analysis */}
+              <Card className="p-6">
+                <h2 className="text-2xl font-bold mb-4">Investment Analysis Summary</h2>
+                <div className="whitespace-pre-wrap font-mono text-sm bg-muted p-4 rounded-md">
+                  {analysisData.combined_analysis}
+                </div>
+              </Card>
+
+              {/* Individual File Analyses */}
+              <Card className="p-6">
+                <h2 className="text-2xl font-bold mb-4">Individual Document Analyses</h2>
+                <Accordion type="single" collapsible className="w-full">
+                  {analysisData.individual_analyses.map((result, index) => (
+                    <AccordionItem key={index} value={`item-${index}`}>
+                      <AccordionTrigger className="text-xl">
+                        {result.filename} ({result.file_type})
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <Tabs defaultValue="final" className="w-full">
+                          <TabsList>
+                            <TabsTrigger value="final">Final Analysis</TabsTrigger>
+                            {result.raw_analyses && result.raw_analyses.length > 0 && (
+                              <TabsTrigger value="raw">Raw Analyses</TabsTrigger>
+                            )}
+                          </TabsList>
+                          <TabsContent value="final">
+                            <div className="whitespace-pre-wrap font-mono text-sm bg-muted p-4 rounded-md">
+                              {result.analysis}
+                            </div>
+                          </TabsContent>
+                          {result.raw_analyses && result.raw_analyses.length > 0 && (
+                            <TabsContent value="raw">
+                              <div className="space-y-4">
+                                {result.raw_analyses.map((analysis, i) => (
+                                  <div key={i} className="whitespace-pre-wrap font-mono text-sm bg-muted p-4 rounded-md">
+                                    <h3 className="font-bold mb-2">Section {i + 1}</h3>
+                                    {analysis}
+                                  </div>
+                                ))}
+                              </div>
+                            </TabsContent>
+                          )}
+                        </Tabs>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </Card>
+            </div>
           ) : (
             <div className="text-center py-8">
               <p className="text-muted-foreground">Loading analysis results...</p>
