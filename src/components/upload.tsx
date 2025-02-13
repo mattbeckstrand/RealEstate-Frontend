@@ -1,17 +1,22 @@
 "use client";
 
 import { useState } from "react"
+import { FileWithType } from "@/types/files"
 
 interface UploadComponentProps {
-    onUpload: (files: File[]) => void;
+    onUpload: (fileWithType: FileWithType[]) => void;
 } 
 
 export function UploadComponent({ onUpload }: UploadComponentProps) {
     const [isDragging, setIsDragging] = useState(false);
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFiles = Array.from(event.target.files || []);
-        onUpload(selectedFiles);
+        const files = Array.from(event.target.files || []);
+        const filesWithType = files.map(file => ({
+            file: file,
+            type: null  // starts as null, will be set by dropdown later
+        }));
+        onUpload(filesWithType);
     }
 
     return (

@@ -3,23 +3,40 @@
 
 import { useState } from "react"
 import { UploadComponent } from '@/components/upload'
+import { FileWithType } from '@/types/files'
+
 
 export function FileHandler() {
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<FileWithType[]>([]);
+
+
+  const handleTypeChange = (fileIndex: number, newType: string) => {
+    const updatedFiles = [...files];
+    updatedFiles[fileIndex].type = newType;
+    setFiles(updatedFiles);
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[200px] border-2 border-dashed border-gray-300 rounded-lg p-6">
       {files.length === 0 ? (
         <UploadComponent onUpload={setFiles} />
       ) : (
-        <div className="text-green-500">
-          {files.length} file(s) selected
-          <button 
-            onClick={() => setFiles([])}
-            className="ml-4 text-red-500 hover:text-red-700"
-          >
-            Clear
-          </button>
+        <div>
+          {files.map((fileItem, index) => (
+            <div key={index}>
+                <span>{fileItem.file.name}</span>
+                <select
+                    value={fileItem.type || ''}
+                    onChange={(e) => handleTypeChange(index, e.target.value)}
+                >
+                    <option value = "" disabled>Select type...</option>
+                    <option value="om">Offering Memorandum</option>
+                    <option value="t12">T12</option>
+                    <option value="rr">Rent Roll</option>
+                </select>
+                </div>
+
+          ))}
         </div>
       )}
     </div>
