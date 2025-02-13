@@ -24,21 +24,11 @@ const data = {
   versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
   navMain: [
     {
-      title: "Upload Data",
-      url: "#",
-      items: [
-        {
-          title: "New Upload",
-          url: "/upload",
-        },
-      ],
-    },
-    {
       title: "Check out projects",
       url: "#",
       items: [
         {
-          title: "Analysis",
+          title: "Upload and Analyze",
           url: "/analysis",
         },
         {
