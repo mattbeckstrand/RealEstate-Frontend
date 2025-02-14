@@ -4,11 +4,26 @@
 import { useState } from "react"
 import { UploadComponent } from '@/components/upload'
 import { FileWithType } from '@/types/files'
+import { uploadFilesToAPI } from "@/lib/api";
 
 
 export function FileHandler() {
   const [files, setFiles] = useState<FileWithType[]>([]);
 
+  const areAllTypesSelected = () => {
+    return files.every(file => file.type !== null);
+  }
+
+  const handleSubmit = async () => {
+    try{
+      const filesToUpload = files.map(f => f.file);
+      const fileTypes = files.map(f => f.type as string);
+      const response = await uploadFilesToAPI(filesToUpload, fileTypes);
+      console.log('Upload successful: ', response);
+    } catch (error) {
+      console.error('Upload failed:', error);
+    }
+  }
 
   const handleTypeChange = (fileIndex: number, newType: string) => {
     const updatedFiles = [...files];
@@ -35,8 +50,14 @@ export function FileHandler() {
                     <option value="rr">Rent Roll</option>
                 </select>
                 </div>
-
           ))}
+          <button
+            onClick={handleSubmit}
+            disabled={!areAllTypesSelected}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
+            >
+              Upload Files
+            </button>
         </div>
       )}
     </div>
