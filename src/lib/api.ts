@@ -11,13 +11,7 @@ export async function fetchFromAPI(endpoint: string) {
 } 
 
 interface UploadResponse {
-  individual_analyses: Array<{
-    filename: string;
-    file_type: string;
-    analysis: string;
-    raw_analyses: any[];
-  }>;
-  combined_analysis: string;
+  t12Text: string
 }
 
 export async function uploadFilesToAPI(
@@ -29,7 +23,7 @@ export async function uploadFilesToAPI(
     formData.append('files', file);
     formData.append('file_types', fileTypes[index]);
   });
-  const response = await fetch(`${API_BASE_URL}/api/uploads`, {
+  const response = await fetch(`${API_BASE_URL}/api/upload-analyze`, {
     method: 'POST',
     body: formData
   })

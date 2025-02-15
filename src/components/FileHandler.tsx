@@ -18,6 +18,8 @@ export function FileHandler() {
     try{
       const filesToUpload = files.map(f => f.file);
       const fileTypes = files.map(f => f.type as string);
+      console.log(fileTypes.length)
+      console.log(files.length)
       const response = await uploadFilesToAPI(filesToUpload, fileTypes);
       console.log('Upload successful: ', response);
     } catch (error) {
@@ -49,7 +51,7 @@ export function FileHandler() {
                     <option value="t12">T12</option>
                     <option value="rr">Rent Roll</option>
                 </select>
-                </div>
+            </div>
           ))}
           <button
             onClick={handleSubmit}
