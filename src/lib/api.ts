@@ -1,5 +1,3 @@
-
-
 const API_BASE_URL = 'http://localhost:8000';
 
 export async function fetchFromAPI(endpoint: string) {
@@ -10,8 +8,22 @@ export async function fetchFromAPI(endpoint: string) {
   return response.json();
 } 
 
+interface CleanedData {
+  category: string;
+  level: number;
+  [key: string]: any; // For monthly values and total
+}
+
+interface T12Data {
+  cleaned_data: CleanedData[];
+  message: string;
+}
+
 interface UploadResponse {
-  t12Text: string
+  status: string;
+  data: {
+    t12Data?: T12Data;
+  };
 }
 
 export async function uploadFilesToAPI(
@@ -26,10 +38,11 @@ export async function uploadFilesToAPI(
   const response = await fetch(`${API_BASE_URL}/api/upload-analyze`, {
     method: 'POST',
     body: formData
-  })
+  });
+  
   if (!response.ok) {
     throw new Error('Upload failed');
-}
+  }
 
-return response.json(); 
+  return response.json();
 }
