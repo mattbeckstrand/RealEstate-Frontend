@@ -86,7 +86,7 @@ export function FileHandler() {
             <div className="mt-8 w-full overflow-x-auto">
               <table className="min-w-full border-collapse border border-gray-300">
                 <thead>
-                  <tr className="bg-gray-100">
+                  <tr className="bg-gray-500">
                     <th className="border p-2">Category</th>
                     <th className="border p-2">Level</th>
                     {Array.from({ length: 12 }, (_, i) => (
@@ -97,7 +97,7 @@ export function FileHandler() {
                 </thead>
                 <tbody>
                   {cleanedData.map((row, index) => (
-                    <tr key={index} className="hover:bg-gray-50">
+                    <tr key={index} className="hover:bg-gray-500">
                       <td className="border p-2">{row.category}</td>
                       <td className="border p-2">{row.level}</td>
                       {Array.from({ length: 12 }, (_, i) => (
