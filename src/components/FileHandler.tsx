@@ -9,6 +9,7 @@ import { uploadFilesToAPI } from "@/lib/api";
 
 export function FileHandler() {
   const [files, setFiles] = useState<FileWithType[]>([]);
+  const [analyzedText, setAnalyzedText] = useState<string>("");
 
   const areAllTypesSelected = () => {
     return files.every(file => file.type !== null);
@@ -18,10 +19,9 @@ export function FileHandler() {
     try{
       const filesToUpload = files.map(f => f.file);
       const fileTypes = files.map(f => f.type as string);
-      console.log(fileTypes.length)
-      console.log(files.length)
       const response = await uploadFilesToAPI(filesToUpload, fileTypes);
       console.log('Upload successful: ', response);
+      setAnalyzedText(response.t12Text);
     } catch (error) {
       console.error('Upload failed:', error);
     }
@@ -55,11 +55,16 @@ export function FileHandler() {
           ))}
           <button
             onClick={handleSubmit}
-            disabled={!areAllTypesSelected}
+            disabled={!areAllTypesSelected()}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
             >
               Upload Files
             </button>
+            {analyzedText && (
+              <div className="mt-4 p-4 border rounded">
+                <pre className="whitespace-pre-wrap">{analyzedText}</pre>
+              </div>
+            )}
         </div>
       )}
     </div>
