@@ -124,6 +124,7 @@ export function FileHandler() {
                   ))}
                 </tbody>
               </table>
+              <p>{cleanedData.find(row => row.category === "Total Income")?.total.toLocaleString()}</p>
             </div>
           )}
         </div>
