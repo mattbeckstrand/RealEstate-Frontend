@@ -4,7 +4,7 @@
 import { useState } from "react"
 import { UploadComponent } from '@/components/upload'
 import { FileWithType } from '@/types/files'
-import { uploadFilesToAPI } from "@/lib/api"
+import { uploadFilesToAPI, RentalIncomeData } from "@/lib/api"
 
 interface CleanedData {
   category: string;
@@ -15,8 +15,10 @@ interface CleanedData {
 export function FileHandler() {
   const [files, setFiles] = useState<FileWithType[]>([]);
   const [cleanedData, setCleanedData] = useState<CleanedData[]>([]);
+  const [gpi, setGpi] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [rentalIncomeData, setRentalIncomeData] = useState<RentalIncomeData | undefined>(undefined);
 
   const areAllTypesSelected = () => {
     return files.every(file => file.type !== null);
@@ -28,11 +30,24 @@ export function FileHandler() {
       setError(null);
       const filesToUpload = files.map(f => f.file);
       const fileTypes = files.map(f => f.type as string);
+      console.log(fileTypes.length);
+      console.log(files.length);
+      
       const response = await uploadFilesToAPI(filesToUpload, fileTypes);
       
       if (response.data?.t12Data?.cleaned_data) {
         setCleanedData(response.data.t12Data.cleaned_data);
       }
+      if (response.data?.gpt?.gpi) {
+        setGpi(response.data.gpt.gpi);
+      }
+      
+      // Store the rental income data
+      if (response.rental_income) {
+        setRentalIncomeData(response.rental_income);
+      }
+      
+      console.log('Upload successful: ', response);
     } catch (error) {
       console.error('Upload failed:', error);
       setError('Failed to process files. Please try again.');
@@ -125,6 +140,7 @@ export function FileHandler() {
                 </tbody>
               </table>
               <p>{cleanedData.find(row => row.category === "Total Income")?.total.toLocaleString()}</p>
+              <p>{gpi}</p>
             </div>
           )}
         </div>

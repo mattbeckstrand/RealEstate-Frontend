@@ -19,30 +19,45 @@ interface T12Data {
   message: string;
 }
 
+export interface RentalIncomeData {
+  monthly_rent: number;
+  annual_rent: number;
+  occupancy_rate: number;
+  effective_gross_income: number;
+}
+
 interface UploadResponse {
   status: string;
   data: {
     t12Data?: T12Data;
+    gpt?: any; // Keep this as is if you're using it
   };
+  rental_income: RentalIncomeData;
 }
 
-export async function uploadFilesToAPI(
+export const uploadFilesToAPI = async (
   files: File[],
   fileTypes: string[]
-): Promise<UploadResponse> {
+): Promise<UploadResponse> => {
   const formData = new FormData();
+  
   files.forEach((file, index) => {
     formData.append('files', file);
-    formData.append('file_types', fileTypes[index]);
   });
-  const response = await fetch(`${API_BASE_URL}/api/upload-analyze`, {
+  
+  fileTypes.forEach((type, index) => {
+    formData.append('file_types', type);
+  });
+  
+  const response = await fetch('/api/upload-analyze', {
     method: 'POST',
     body: formData
   });
   
   if (!response.ok) {
-    throw new Error('Upload failed');
+    const errorData = await response.json();
+    throw new Error(errorData.detail?.message || 'Upload failed');
   }
-
-  return response.json();
-}
+  
+  return await response.json();
+};
