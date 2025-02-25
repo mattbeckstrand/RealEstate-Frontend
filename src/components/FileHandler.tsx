@@ -5,6 +5,7 @@ import { useState } from "react"
 import { UploadComponent } from '@/components/upload'
 import { FileWithType } from '@/types/files'
 import { uploadFilesToAPI, RentalIncomeData } from "@/lib/api"
+import { DashboardTab } from './DashboardTab'
 
 interface CleanedData {
   category: string;
@@ -97,6 +98,12 @@ export function FileHandler() {
             </div>
           )}
 
+          {rentalIncomeData && (
+            <div className="mt-8">
+              <DashboardTab rentalIncome={rentalIncomeData} />
+            </div>
+          )}
+
           {cleanedData.length > 0 && (
             <div className="mt-8 w-full overflow-x-auto">
               <table className="min-w-full border-collapse border border-gray-300">
@@ -140,7 +147,6 @@ export function FileHandler() {
                 </tbody>
               </table>
               <p>{cleanedData.find(row => row.category === "Total Income")?.total.toLocaleString()}</p>
-              <p>{gpi}</p>
             </div>
           )}
         </div>

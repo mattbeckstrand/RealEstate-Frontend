@@ -22,8 +22,6 @@ interface T12Data {
 export interface RentalIncomeData {
   monthly_rent: number;
   annual_rent: number;
-  occupancy_rate: number;
-  effective_gross_income: number;
 }
 
 interface UploadResponse {
@@ -49,7 +47,7 @@ export const uploadFilesToAPI = async (
     formData.append('file_types', type);
   });
   
-  const response = await fetch('/api/upload-analyze', {
+  const response = await fetch(`${API_BASE_URL}/api/upload-analyze/`, {
     method: 'POST',
     body: formData
   });
